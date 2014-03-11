@@ -4,6 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
+            defaultHandler="be.ac.ua.main.DoHandler"
             description="Checks compliance with the ASP"
             id="ASPChecker.do"
             name="Check ASP">
@@ -13,11 +14,24 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="ASPChecker.doButton">
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <command
                commandId="ASPChecker.do"
                label="Check Advices"
                style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="or">
+                     <adapt
+                           type="org.eclipse.core.resources.IProject">
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
          </command>
       </menuContribution>
    </extension>
