@@ -1,4 +1,4 @@
-package be.ac.ua.main;
+package be.ac.ua.aspchecker.main;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
