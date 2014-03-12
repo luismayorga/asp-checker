@@ -1,4 +1,4 @@
-package be.ac.ua.aspchecker.main;
+package be.ac.ua.aspchecker.init;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

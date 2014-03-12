@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="be.ac.ua.aspchecker.main.DoHandler"
+            defaultHandler="be.ac.ua.aspchecker.init.DoHandler"
             description="Checks compliance with the ASP"
             id="ASPChecker.do"
             name="Check ASP">
