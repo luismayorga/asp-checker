@@ -1,9 +1,11 @@
 package be.ac.ua.aspchecker.init;
 
+import org.eclipse.ajdt.core.builder.AJBuilder;
+import org.eclipse.ui.IStartup;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator, IStartup {
 
 	private static BundleContext context;
 
@@ -25,6 +27,11 @@ public class Activator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+	}
+
+	@Override
+	public void earlyStartup() {
+		AJBuilder.addAJBuildListener(new BuildListener());
 	}
 
 }

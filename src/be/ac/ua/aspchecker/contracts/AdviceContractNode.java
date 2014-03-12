@@ -30,10 +30,20 @@ public class AdviceContractNode implements Comparable{
 	public void setNext(AdviceContractNode next) {
 		this.next = next;
 	}
-	@Override
+	
 	public int compareTo(Comparable arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		int ret = 0;
+		if(arg0==null){
+			throw new NullPointerException();
+		}else if(arg0 instanceof AdviceContractNode){
+			throw new ClassCastException();
+		}
+		//TODO compare contracts
+		return ret;
+	}
+	
+	public boolean equals(AdviceContractNode o){
+		return this.compareTo(o)==0;
 	}
 	
 	

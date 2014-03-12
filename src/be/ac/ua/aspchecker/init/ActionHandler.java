@@ -9,7 +9,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 import be.ac.ua.aspchecker.processing.CheckingJob;
 
-public class DoHandler extends AbstractHandler {
+public class ActionHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {

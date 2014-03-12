@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension point="org.eclipse.ui.startup">
+     <startup class="be.ac.ua.aspchecker.init.Activator"/>
+   </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="be.ac.ua.aspchecker.init.DoHandler"
+            defaultHandler="be.ac.ua.aspchecker.init.ActionHandler"
             description="Checks compliance with the ASP"
             id="ASPChecker.do"
             name="Check ASP">
