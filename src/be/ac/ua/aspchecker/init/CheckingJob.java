@@ -22,21 +22,24 @@ public class CheckingJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		IStatus ret;
+		
 		if(monitor.isCanceled()){
-			ret = Status.CANCEL_STATUS;
-		}else{
-			AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
-			if(model.hasModel()){
-				AdviceExecutionModel aem = new AdviceExecutionModel(model);
-				aem.evaluate();
-				//TODO
-				ret = Status.OK_STATUS;
-			}else{
-				ret = new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");
-			}
+			return Status.CANCEL_STATUS;
 		}
-		return ret;
+		
+		AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
+		if(model.hasModel()){
+			AdviceExecutionModel aem = new AdviceExecutionModel(model);
+
+			if(monitor.isCanceled()){
+				return Status.CANCEL_STATUS;
+			}
+
+			aem.evaluate();
+			return Status.OK_STATUS;
+		}else{
+			return new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");
+		}
 	}
 
 }
