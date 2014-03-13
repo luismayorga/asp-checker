@@ -8,7 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import be.ac.ua.aspchecker.model.AJRelationshipsModel;
+import be.ac.ua.aspchecker.model.AdviceExecutionModel;
 
 public class CheckingJob extends Job {
 
@@ -28,7 +28,8 @@ public class CheckingJob extends Job {
 		}else{
 			AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
 			if(model.hasModel()){
-				AJRelationshipsModel relModel = AJRelationshipsModel.getInstanceForModel(model);
+				AdviceExecutionModel aem = new AdviceExecutionModel(model);
+				aem.evaluate();
 				//TODO
 				ret = Status.OK_STATUS;
 			}else{

@@ -1,38 +1,26 @@
 package be.ac.ua.aspchecker.model;
 
 import org.aspectj.org.eclipse.jdt.internal.core.util.Util.Comparable;
+import org.eclipse.jdt.core.IJavaElement;
 
-public class AdviceContractNode implements Comparable{	
-	//TODO split around in two
-	//priority
+public class AdviceContractNode implements Comparable {	
+
 	private enum ContractKind {BEFORE, AFTER, AROUND_PRE, AROUND_POST};
-	
-	public AdviceContractNode(ContractKind kind, Contract contract) {
-		super();
-		Kind = kind;
-		this.contract = contract;
-	}
-	
-	private ContractKind Kind;
-	private Contract contract;
-	private AdviceContractNode next;
-	
-	public Contract getContract() {
-		return contract;
-	}
-	
-	public ContractKind getKind(){
-		return Kind;
+
+	private AdviceContractNode() {
 	}
 
-	public AdviceContractNode getNext() {
-		return next;
+	private AdviceContractNode lower;
+
+	public AdviceContractNode(IJavaElement ije){
+		//TODO replace stub
+		System.out.println(ije.getElementName());
 	}
-	
-	public void setNext(AdviceContractNode next) {
-		this.next = next;
+
+	public AdviceContractNode getLower() {
+		return lower;
 	}
-	
+
 	public int compareTo(Comparable arg0) {
 		int ret = 0;
 		if(arg0==null){
@@ -43,10 +31,9 @@ public class AdviceContractNode implements Comparable{
 		//TODO compare contracts
 		return ret;
 	}
-	
+
 	public boolean equals(AdviceContractNode o){
 		return this.compareTo(o)==0;
 	}
-	
-	
+
 }

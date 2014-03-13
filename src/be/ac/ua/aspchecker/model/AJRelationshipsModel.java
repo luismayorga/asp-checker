@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.aspectj.asm.IRelationship;
 import org.eclipse.ajdt.core.model.AJProjectModelFacade;
@@ -15,6 +17,8 @@ public class AJRelationshipsModel {
 
 	private Map<IJavaElement, List<IJavaElement>> relationships;
 
+	private AJRelationshipsModel(){}
+	
 	private AJRelationshipsModel(AJProjectModelFacade model) {
 		super();
 		relationships = new HashMap<>();
@@ -48,14 +52,14 @@ public class AJRelationshipsModel {
 	}
 
 	private void addTargets(IRelationship rel, AJProjectModelFacade model){
-		List<IJavaElement> existingRels = relationships.get(rel.getSourceHandle());
+		List<IJavaElement> existingRels = relationships.get(model.programElementToJavaElement(rel.getSourceHandle()));
 		for( String target : rel.getTargets()) {
 			existingRels.add(model.programElementToJavaElement(target));
 		}
 	}
 	
-	public AdviceExecutionModel toExecutionModel(){
-		return new AdviceExecutionModel(this);
+	public Set<Entry<IJavaElement, List<IJavaElement>>> getRelationships(){
+		return relationships.entrySet();
 	}
 
 }
