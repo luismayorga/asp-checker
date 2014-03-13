@@ -1,21 +1,18 @@
-package be.ac.ua.aspchecker.processing;
+package be.ac.ua.aspchecker.init;
 
-import java.util.List;
-
-import org.aspectj.asm.IRelationship;
 import org.eclipse.ajdt.core.model.AJProjectModelFacade;
 import org.eclipse.ajdt.core.model.AJProjectModelFactory;
-import org.eclipse.ajdt.core.model.AJRelationshipManager;
-import org.eclipse.ajdt.core.model.AJRelationshipType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import be.ac.ua.aspchecker.model.AJRelationshipsModel;
+
 public class CheckingJob extends Job {
 
-	IProject project;
+	private IProject project;
 
 	public CheckingJob(String name, IProject project) {
 		super(name);
@@ -31,16 +28,11 @@ public class CheckingJob extends Job {
 		}else{
 			AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
 			if(model.hasModel()){
+				AJRelationshipsModel relModel = AJRelationshipsModel.getInstanceForModel(model);
 				//TODO
-				AJRelationshipType[] types = AJRelationshipManager.getAllRelationshipTypes();
-				List<IRelationship> list = model.getRelationshipsForProject(types);
-				for (IRelationship iRelationship : list) {
-					System.out.println(AJProjectModelFacade.printRelationship(iRelationship));
-				}
-				
 				ret = Status.OK_STATUS;
 			}else{
-				ret = new Status(Status.ERROR, getName(), "Error obtaining model, rebuild project");
+				ret = new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");
 			}
 		}
 		return ret;

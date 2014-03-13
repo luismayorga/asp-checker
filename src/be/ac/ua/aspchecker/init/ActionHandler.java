@@ -7,8 +7,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import be.ac.ua.aspchecker.processing.CheckingJob;
-
 public class ActionHandler extends AbstractHandler {
 
 	@Override

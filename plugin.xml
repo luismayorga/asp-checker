@@ -20,7 +20,7 @@
             locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <command
                commandId="ASPChecker.do"
-               label="Check Advices"
+               label="Check Advices for compliance"
                style="push">
             <visibleWhen
                   checkEnabled="false">

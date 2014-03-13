@@ -1,9 +1,11 @@
-package be.ac.ua.aspchecker.contracts;
+package be.ac.ua.aspchecker.model;
 
 import org.aspectj.org.eclipse.jdt.internal.core.util.Util.Comparable;
 
 public class AdviceContractNode implements Comparable{	
-	private enum ContractKind {BEFORE, AFTER, AROUND};
+	//TODO split around in two
+	//priority
+	private enum ContractKind {BEFORE, AFTER, AROUND_PRE, AROUND_POST};
 	
 	public AdviceContractNode(ContractKind kind, Contract contract) {
 		super();

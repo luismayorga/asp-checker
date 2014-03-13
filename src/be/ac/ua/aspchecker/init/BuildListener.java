@@ -9,8 +9,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.compiler.CategorizedProblem;
 
-import be.ac.ua.aspchecker.processing.CheckingJob;
-
 public class BuildListener implements IAJBuildListener {
 
 	@Override
@@ -25,21 +23,12 @@ public class BuildListener implements IAJBuildListener {
 	}
 
 	@Override
-	public void postAJClean(IProject arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	public void postAJClean(IProject arg0) {}
 
 	@Override
-	public void preAJBuild(int arg0, IProject arg1, IProject[] arg2) {
-		// TODO Auto-generated method stub
-
-	}
+	public void preAJBuild(int arg0, IProject arg1, IProject[] arg2) {}
 
 	@Override
-	public void removeAdviceListener(IAdviceChangedListener arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	public void removeAdviceListener(IAdviceChangedListener arg0) {}
 
 }
