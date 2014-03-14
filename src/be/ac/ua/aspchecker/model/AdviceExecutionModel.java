@@ -1,46 +1,40 @@
 package be.ac.ua.aspchecker.model;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
-
-import org.eclipse.ajdt.core.model.AJProjectModelFacade;
-import org.eclipse.jdt.core.IJavaElement;
+import java.util.Set;
 
 public class AdviceExecutionModel {
 
-	private HashSet<PriorityQueue<AdviceExecutionNode>> executionSequences;
+	private HashSet<PriorityQueue<ExecutableNode>> executionSequences;
 	private AdviceExecutionModel(){}
 
-	public AdviceExecutionModel(AJProjectModelFacade model){
-		
-		AJRelationshipsModel relModel = AJRelationshipsModel.getInstanceForModel(model);
-		executionSequences = new HashSet<>(relModel.getRelationships().size());
-		
-		nodify(relModel);
+	public AdviceExecutionModel(AJRelationshipsModel model){
+		executionSequences = new HashSet<>(model.getRelationships().size());
+		transformFromRelationshipModel(model);
 	}
 
-	private void nodify(AJRelationshipsModel relModel){
-		PriorityQueue<AdviceExecutionNode> sequence;
-		AdviceExecutionNode acn;
+	private void transformFromRelationshipModel(AJRelationshipsModel relModel){
 		
-		for ( Entry<IJavaElement, List<IJavaElement>> iter : relModel.getRelationships()) {
+		PriorityQueue<ExecutableNode> sequence;
+		ExecutableNode acn;
+		
+		for (Entry<ExecutableNode, Set<ExecutableNode>> iter : relModel.getRelationships()) {
 			
 			sequence = new PriorityQueue<>(iter.getValue().size()+1);
 			executionSequences.add(sequence);
 			
-			acn = new AdviceExecutionNode(iter.getKey());
-			sequence.add(acn);
+			//Method
+			sequence.add(iter.getKey());
 			
-			for (IJavaElement advice : iter.getValue()) {
-				acn = new AdviceExecutionNode(advice);
-				sequence.add(acn);
+			for ( ExecutableNode en : iter.getValue()) {
+				sequence.add(en);
 			}
 		}
 	}
 
-	public void evaluate() {
+	public void evaluateExecutionRules() {
 		// TODO Comparar todos los contratos
 	}
 

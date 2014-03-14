@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import be.ac.ua.aspchecker.model.AJRelationshipsModel;
 import be.ac.ua.aspchecker.model.AdviceExecutionModel;
 
 public class CheckingJob extends Job {
@@ -29,13 +30,15 @@ public class CheckingJob extends Job {
 		
 		AJProjectModelFacade model = AJProjectModelFactory.getInstance().getModelForProject(project);
 		if(model.hasModel()){
-			AdviceExecutionModel aem = new AdviceExecutionModel(model);
+			AJRelationshipsModel relModel = AJRelationshipsModel.getInstanceForModel(model);
+			relModel.evaluateASP();
+			AdviceExecutionModel aem = relModel.getAdviceExecutionModel();
 
 			if(monitor.isCanceled()){
 				return Status.CANCEL_STATUS;
 			}
 
-			aem.evaluate();
+			aem.evaluateExecutionRules();
 			return Status.OK_STATUS;
 		}else{
 			return new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");

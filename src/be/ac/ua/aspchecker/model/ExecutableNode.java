@@ -2,30 +2,30 @@ package be.ac.ua.aspchecker.model;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-public class AdviceExecutionNode implements Comparable<AdviceExecutionNode> {	
+public class ExecutableNode implements Comparable<ExecutableNode> {	
 
 	private enum ContractKind {BEFORE, AFTER, AROUND_PRE, AROUND_POST};
 
-	private AdviceExecutionNode() {
+	private ExecutableNode() {
 	}
 
-	private AdviceExecutionNode lower;
+	private ExecutableNode lower;
 
-	public AdviceExecutionNode(IJavaElement ije){
+	public ExecutableNode(IJavaElement ije){
 		//TODO get information from element, including contracts annotations
-		System.out.println(ije.getElementName());
 	}
 
-	public AdviceExecutionNode getLower() {
+	public ExecutableNode getLower() {
 		return lower;
 	}
 
-	public boolean equals(AdviceExecutionNode o){
+	//TODO should be changed, though it would not respect x.equals(y) == x.compareTo(y)=0
+	public boolean equals(ExecutableNode o){
 		return this.compareTo(o)==0;
 	}
 
 	@Override
-	public int compareTo(AdviceExecutionNode o) {
+	public int compareTo(ExecutableNode o) {
 		int ret = 0;
 		if(o==null){
 			throw new NullPointerException();

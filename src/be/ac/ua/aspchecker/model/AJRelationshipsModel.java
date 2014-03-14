@@ -1,7 +1,7 @@
 package be.ac.ua.aspchecker.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.IJavaElement;
 
 public class AJRelationshipsModel {
 
-	private Map<IJavaElement, List<IJavaElement>> relationships;
+	private Map<ExecutableNode, Set<ExecutableNode>> relationships;
 
 	private AJRelationshipsModel(){}
 	
@@ -42,24 +42,32 @@ public class AJRelationshipsModel {
 		//Iterate through relationships
 		for (IRelationship rel : list) {
 			IJavaElement JavaElement = model.programElementToJavaElement(rel.getSourceHandle());
-
+			
 			//And store them
 			if(!relationships.containsKey(JavaElement)){
-				relationships.put(JavaElement, new ArrayList<IJavaElement>());
+				relationships.put(new ExecutableNode(JavaElement), new HashSet<ExecutableNode>());
 			}
 			addTargets(rel, model);
 		}
 	}
 
 	private void addTargets(IRelationship rel, AJProjectModelFacade model){
-		List<IJavaElement> existingRels = relationships.get(model.programElementToJavaElement(rel.getSourceHandle()));
+		Set<ExecutableNode> existingRels = relationships.get(model.programElementToJavaElement(rel.getSourceHandle()));
 		for( String target : rel.getTargets()) {
-			existingRels.add(model.programElementToJavaElement(target));
+			existingRels.add(new ExecutableNode(model.programElementToJavaElement(target)));
 		}
 	}
 	
-	public Set<Entry<IJavaElement, List<IJavaElement>>> getRelationships(){
+	public Set<Entry<ExecutableNode, Set<ExecutableNode>>> getRelationships(){
 		return relationships.entrySet();
 	}
 
+	public AdviceExecutionModel getAdviceExecutionModel(){
+		return new AdviceExecutionModel(this);
+	}
+	
+	public void evaluateASP(){
+		
+	}
+	
 }
