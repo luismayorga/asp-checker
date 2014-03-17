@@ -5,6 +5,7 @@ import org.eclipse.jdt.core.IJavaElement;
 public class ExecutableNode implements Comparable<ExecutableNode> {	
 
 	private enum ContractKind {BEFORE, AFTER, AROUND_PRE, AROUND_POST};
+	private Contract contract;
 
 	private ExecutableNode() {
 	}
@@ -13,6 +14,10 @@ public class ExecutableNode implements Comparable<ExecutableNode> {
 
 	public ExecutableNode(IJavaElement ije){
 		//TODO get information from element, including contracts annotations
+	}
+
+	public Contract getContract() {
+		return contract;
 	}
 
 	public ExecutableNode getLower() {

@@ -25,7 +25,6 @@ public class AdviceExecutionModel {
 			sequence = new PriorityQueue<>(iter.getValue().size()+1);
 			executionSequences.add(sequence);
 			
-			//Method
 			sequence.add(iter.getKey());
 			
 			for ( ExecutableNode en : iter.getValue()) {
@@ -35,7 +34,7 @@ public class AdviceExecutionModel {
 	}
 
 	public void evaluateExecutionRules() {
-		// TODO Comparar todos los contratos
+		// TODO Comparar orden de ejecucion
 	}
 
 }

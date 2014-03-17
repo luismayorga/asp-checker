@@ -67,7 +67,13 @@ public class AJRelationshipsModel {
 	}
 	
 	public void evaluateASP(){
-		
+		for ( Entry<ExecutableNode, Set<ExecutableNode>> rels : relationships.entrySet()) {
+			ExecutableNode method = rels.getKey();
+			for ( ExecutableNode advice : rels.getValue()) {
+				//TODO STUB; completely implement
+				method.getContract().compareTo(advice.getContract());
+			}
+		}
 	}
 	
 }
