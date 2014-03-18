@@ -3,5 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="be/ac/ua/aspchecker/clojure/|be/ac/ua/aspchecker/functional/" kind="src" path="src"/>
+	<classpathentry kind="src" path="clojure"/>
+	<classpathentry kind="lib" path="/Users/luis/.m2/repository/clojure-complete/clojure-complete/0.2.3/clojure-complete-0.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
