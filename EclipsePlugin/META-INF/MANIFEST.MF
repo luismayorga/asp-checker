@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ASPChecker
-Bundle-SymbolicName: ASPChecker;singleton:=true
+Bundle-SymbolicName: EclipsePlugin;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: be.ac.ua.aspchecker.init.Activator
 Bundle-Vendor: be.ac.ua
