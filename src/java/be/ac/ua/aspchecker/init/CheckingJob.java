@@ -31,8 +31,6 @@ public class CheckingJob extends Job {
 				return Status.CANCEL_STATUS;
 			}
 			
-			//TODO clojure library entry point
-			
 			return Status.OK_STATUS;
 		}else{
 			return new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");
