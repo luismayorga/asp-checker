@@ -31,6 +31,8 @@ public class CheckingJob extends Job {
 				return Status.CANCEL_STATUS;
 			}
 			
+			System.out.println("proceso");
+			
 			return Status.OK_STATUS;
 		}else{
 			return new Status(Status.WARNING, getName(), "Model not present, rebuild to analyze");

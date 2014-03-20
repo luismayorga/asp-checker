@@ -2,15 +2,24 @@ package be.ac.ua.aspchecker.init;
 
 import org.eclipse.ajdt.core.builder.AJBuilder;
 import org.eclipse.ui.IStartup;
-import org.osgi.framework.BundleActivator;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator, IStartup {
+import ccw.util.osgi.ClojureOSGi;
 
+public class Activator extends  AbstractUIPlugin implements IStartup {
+
+	public static final String PLUGIN_ID = "asp-checker";
+	
 	private static BundleContext context;
 
 	static BundleContext getContext() {
 		return context;
+	}
+
+	public Activator() {
+		super();
 	}
 
 	/*
@@ -19,6 +28,7 @@ public class Activator implements BundleActivator, IStartup {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		startClojureCode(bundleContext);
 	}
 
 	/*
@@ -32,6 +42,18 @@ public class Activator implements BundleActivator, IStartup {
 	@Override
 	public void earlyStartup() {
 		AJBuilder.addAJBuildListener(new BuildListener());
+	}
+	
+	private void startClojureCode(BundleContext bundleContext) throws Exception {
+		Bundle b = bundleContext.getBundle();
+		String[] namespaces= { "damp.ekeko", "be.ac.ua.aspchecker.core" };	
+		for(String namespace : namespaces) {
+			try {
+				ClojureOSGi.require(b, namespace);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
