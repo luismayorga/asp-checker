@@ -1,42 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension point="org.eclipse.ui.startup">
-     <startup class="be.ac.ua.aspchecker.init.Activator"/>
-   </extension>
    <extension
-         point="org.eclipse.ui.commands">
-      <command
-            defaultHandler="be.ac.ua.aspchecker.init.ActionHandler"
-            description="Checks compliance with the ASP"
-            id="ASPChecker.do"
-            name="Check ASP">
-      </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.menus">
-      <menuContribution
-            allPopups="false"
-            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
-         <command
-               commandId="ASPChecker.do"
-               label="Check Advices for compliance"
-               style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activeMenuSelection">
-                  <iterate
-                        ifEmpty="false"
-                        operator="or">
-                     <adapt
-                           type="org.eclipse.core.resources.IProject">
-                     </adapt>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-      </menuContribution>
+         point="org.eclipse.ui.startup">
+      <startup
+            class="be.ac.ua.aspchecker.init.Activator">
+      </startup>
    </extension>
 
 </plugin>

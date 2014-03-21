@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.ajdt.core;bundle-version="2.2.3",
  damp.ekeko.plugin;bundle-version="2.0.8",
  org.eclipse.osgi.services;bundle-version="3.3.100",
  org.eclipse.osgi.util;bundle-version="3.2.300",
- damp.libs;bundle-version="2.0.8"
+ damp.libs;bundle-version="2.0.8",
+ org.eclipse.jface.text;bundle-version="3.8.101"
 Eclipse-RegisterBuddy: damp.ekeko.plugin, damp.libs
 Export-Package: be.ac.ua.aspchecker.annotations
 Bundle-ClassPath: .

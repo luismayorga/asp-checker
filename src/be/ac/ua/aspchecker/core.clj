@@ -1,5 +1,8 @@
-(ns be.ac.ua.aspchecker.core)
+(ns be.ac.ua.aspchecker.core
+  (:require [damp.ekeko])
+  (:require [damp.ekeko.aspectj.weaverworld])
+  )
 
-  (defn hola
+  (defn check-advices
     []
-    (prn "Clojure ejecutando"))
+  (prn "holi"))

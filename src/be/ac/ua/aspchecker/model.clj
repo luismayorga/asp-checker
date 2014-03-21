@@ -1,1 +1,1 @@
-(ns aspcore.model)
+(ns be.ac.ua.aspchecker.model)
