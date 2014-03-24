@@ -1,8 +1,7 @@
 (ns be.ac.ua.aspchecker.core
-  (:require [damp.ekeko])
-  (:require [damp.ekeko.aspectj.weaverworld])
-  )
+  (:require [be.ac.ua.aspchecker.model]))
 
-  (defn check-advices
-    []
+(defn run
+  []
   (prn "holi"))
+
