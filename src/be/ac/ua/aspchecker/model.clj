@@ -1,7 +1,7 @@
 (ns 
-    ^{:doc "Ekeko model queries."
+  ^{:doc "Ekeko model queries."
     :author "Luis Mayorga"}
-  be.ac.ua.aspchecker.model  
+be.ac.ua.aspchecker.model  
   (:require [damp.ekeko :as ek])
   (:require [damp.ekeko.aspectj.weaverworld :as eaj])
   (:require [damp.ekeko.jdt [astnode :as ast]])
@@ -80,11 +80,22 @@
               ?annotation 
               "be.ac.ua.aspchecker.annotations.invariant")))
 
+
 (defn binded|annotations
   "Annotation bindings"
   []
   (loop [result nil, anns (annotations-bindings)]
     (if (seq anns)
-      (let[[_ abin] (first anns)]
-        (recur(cons abin result), (rest anns)))
+      (let [[_ abin] (first anns)]
+        (recur(cons abin result) (rest anns)))
+      result)))
+
+
+(defn advice-annotation
+  "Return pairs BcelAdvice, AnnotationAJ[]"
+  []
+  (loop[result nil, raw (advice-shadow)]
+    (if (seq raw)
+      (let [[adv _] (first raw)]
+        (recur (cons [adv (.getAnnotations (.getSignature adv))] result) (rest raw)))
       result)))
