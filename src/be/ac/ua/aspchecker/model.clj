@@ -37,7 +37,7 @@ be.ac.ua.aspchecker.model
 
 
 (defn annotations-bindings
-  "All annotations with their bindings"
+  "All annotations and their bindings"
   []
   (ek/ekeko [?annotation ?binding]
             (astb/ast|annotation-binding|annotation 
@@ -80,7 +80,7 @@ be.ac.ua.aspchecker.model
               ?annotation 
               "be.ac.ua.aspchecker.annotations.invariant")))
 
-
+;TODO maybe descompose in a simpler function and apply
 (defn binded|annotations
   "Annotation bindings"
   []
@@ -91,11 +91,41 @@ be.ac.ua.aspchecker.model
       result)))
 
 
+;TODO maybe descompose in a simpler function and apply
 (defn advice-annotation
-  "Return pairs BcelAdvice, AnnotationAJ[]"
+  "Return pairs < BcelAdvice, AnnotationAJ vector > with all 
+the annotations corresponding to an advice"
   []
-  (loop[result nil, raw (advice-shadow)]
+  (loop[result [], raw (advice-shadow)]
     (if (seq raw)
       (let [[adv _] (first raw)]
-        (recur (cons [adv (.getAnnotations (.getSignature adv))] result) (rest raw)))
+        (recur (cons [adv (into [] (.getAnnotations (.getSignature adv)))] result) (rest raw)))
+      result)))
+
+
+(defn annotationtype
+  "Returns the annotation type in keyword form"
+  [an]
+  (cond
+    (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.requires")
+    (keyword "requires")
+    (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.ensures")
+    (keyword "ensures")
+    (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.invariant")
+    (keyword "invariant")
+    (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.advisedBy")
+    (keyword "advisedBy")))
+
+
+(defn annotationaj-to-normalized
+  "Receives an annotation list and returns a map with their type as keyword
+and their value as stored value"
+  [annotations]
+  (loop [result {}, ans annotations]
+    (if (seq ans)
+      (let[a (first ans)]
+        (if  (nil? (annotationtype a))
+          (recur result (rest ans))
+          (recur (assoc result (annotationtype a) (.getStringFormOfValue a "value")) 
+                 (rest ans))))
       result)))
