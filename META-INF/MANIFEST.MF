@@ -22,4 +22,5 @@ Require-Bundle: org.eclipse.ajdt.core;bundle-version="2.2.3",
  org.eclipse.jface.text;bundle-version="3.8.101"
 Eclipse-RegisterBuddy: damp.ekeko.plugin, damp.libs
 Export-Package: be.ac.ua.aspchecker.annotations
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/com.microsoft.z3.jar

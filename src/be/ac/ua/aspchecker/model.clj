@@ -130,7 +130,6 @@ the annotations corresponding to an advice"
       result)))
 
 
-
 (defn advice-annotation+
   "Return pairs of BcelAdvice and a map containing the annotations. Differs
 to the other version in normalization of the annotations"
