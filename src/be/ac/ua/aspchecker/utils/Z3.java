@@ -45,6 +45,7 @@ public class Z3 {
 			Solver s = ctx.MkSolver();
 			s.Assert(f);
 			res = s.Check().equals(Status.SATISFIABLE);
+			ctx.Dispose();
 		} catch (Z3Exception e) {e.printStackTrace();}
 		return res;
 	}

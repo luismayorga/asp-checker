@@ -7,88 +7,65 @@ be.ac.ua.aspchecker.model
   (:require [damp.ekeko.jdt [astnode :as ast]])
   (:require [damp.ekeko.jdt.convenience :as conv])
   (:require [damp.ekeko.jdt.astbindings :as astb])
-  (:require [damp.ekeko.jdt.ast :as as]))
+  (:require [damp.ekeko.jdt.ast :as as])
+  (:require [damp.ekeko.aspectj.soot :as soot]))
 
 
+; Program elements queries
 
-(defn advice-shadow
-  "All advices and their shadows"
-  []
+(defn advice []
+  (ek/ekeko [?advice]
+            (wea/advice 
+              ?advice)))
+
+
+(defn shadow []
+  (ek/ekeko [?shadow]
+            (wea/shadow 
+              ?shadow)))
+
+
+(defn advice-shadow []
   (ek/ekeko [?advice ?shadow]
             (wea/advice-shadow 
               ?advice 
               ?shadow)))
 
 
-(defn advices
-  "All advices"
-  []
-  (ek/ekeko [?advice]
-            (wea/advice 
-              ?advice)))
+(defn method []
+  (ek/ekeko [?method]
+            (wea/method 
+              ?method)))
 
 
-(defn shadows
-  "All shadows"
-  []
-  (ek/ekeko [?shadow]
-            (wea/shadow 
-              ?shadow)))
+;The only annotations returned by ekeko are the ones in advised code
 
-
-(defn annotations-bindings
-  "All annotations and their bindings"
-  []
-  (ek/ekeko [?annotation ?binding]
-            (astb/ast|annotation-binding|annotation 
-              ?annotation 
-              ?binding)))
-
-
-(defn annotations|requires
-  "requires annotations"
-  []
+(defn annotation|requires []
   (ek/ekeko [?annotation] 
             (conv/annotation-name|qualified|string 
               ?annotation 
               "be.ac.ua.aspchecker.annotations.requires")))
 
 
-(defn annotations|ensures
-  "ensures annotations"
-  []
+(defn annotation|ensures []
   (ek/ekeko [?annotation] 
             (conv/annotation-name|qualified|string 
               ?annotation 
               "be.ac.ua.aspchecker.annotations.ensures")))
 
 
-(defn annotations|advisedBy
-  "advisedBy annotations"
-  []
+(defn annotation|advisedBy []
   (ek/ekeko [?annotation] 
             (conv/annotation-name|qualified|string 
               ?annotation 
               "be.ac.ua.aspchecker.annotations.advisedBy")))
 
 
-(defn annotations|invariant
-  "Invariant annotations"
-  []
+(defn annotation|invariant []
   (ek/ekeko [?annotation] 
             (conv/annotation-name|qualified|string 
               ?annotation 
               "be.ac.ua.aspchecker.annotations.invariant")))
-
-
-(defn binded|annotations
-  "Annotation bindings"
-  []
-  (loop [result nil, anns (annotations-bindings)]
-    (if (seq anns)
-      (let [[_ abin] (first anns)]
-        (recur(cons abin result) (rest anns)))
-      result)))
 
 
 (defn annotationtype
@@ -105,7 +82,21 @@ be.ac.ua.aspchecker.model
     (keyword "advisedBy")))
 
 
-(defn annotationaj-to-normalized
+;Bcel annotations
+
+(defn bceladvice|annotationaj
+  "Returns the annotations of an advice"
+  [el]
+  (into [] (.getAnnotations (.getSignature el))))
+
+
+(defn bcelmethod|annotationaj
+  "Returns the annotations of a method"
+  [el]
+  (into [] (.getAnnotations el)))
+
+
+(defn annotationaj|annotation
   "Receives an annotation list and returns a map with their type as keyword
 and their value as stored value"
   [annotations]
@@ -119,24 +110,33 @@ and their value as stored value"
       result)))
 
 
-(defn advice-annotation
-  "Return pairs < BcelAdvice, AnnotationAJ vector > with all 
-the annotations corresponding to an advice"
-  []
-  (loop[result [], raw (advices)]
-    (if (seq raw)
-      (let [[adv] (first raw)]
-        (recur (cons [adv (into [] (.getAnnotations (.getSignature adv)))] result) (rest raw)))
-      result)))
+(defn bceladvice|annotation
+  "Return normalized annotations of an advice"
+  [el]
+  ((comp annotationaj|annotation bceladvice|annotationaj) el))
 
 
-(defn advice-annotation+
-  "Return pairs of BcelAdvice and a map containing the annotations. Differs
-to the other version in normalization of the annotations"
+(defn bcelmethod|annotation
+  "Return normalized annotations of a method"
+  [el]
+  ((comp annotationaj|annotation bcelmethod|annotationaj) el))
+
+
+(defn shadow|invocation-method|called
+  "Returns the BcelMethod referenced within the provided shadow"
+  ([] (map (fn[x](vector x (shadow|invocation-method|called (first x)))) (shadow)))
+  ([shadow] (filter (fn [x] (.contains (.toString shadow) (.toString (first x)))) (method))))
+
+
+(defn advice-method-annotation
+  "Return a vector with the structure: [[advice[annotations]][method[annotations]]]"
   []
-  (let [pairs (advice-annotation)]
-    (map 
-      (fn [pair] 
-        (let [[a b] pair] 
-          (vector a (annotationaj-to-normalized b)))) 
-      pairs)))
+  (map
+    (fn [x](let [[a s] x]
+             (vector (vector a 
+                             (bceladvice|annotation a))
+                     (vector (shadow|invocation-method|called s)
+                             (bcelmethod|annotation
+                               (first(first(shadow|invocation-method|called s))))))))
+    (advice-shadow)))
+
