@@ -25,6 +25,7 @@ be.ac.ua.aspchecker.model
               ?shadow)))
 
 
+;TODO remove duplicates
 (defn advice-shadow []
   (ek/ekeko [?advice ?shadow]
             (wea/advice-shadow 
@@ -68,6 +69,7 @@ be.ac.ua.aspchecker.model
               "be.ac.ua.aspchecker.annotations.invariant")))
 
 
+;Type mapping
 (defn annotationtype
   "Returns the annotation type in keyword form"
   [an]
@@ -80,6 +82,18 @@ be.ac.ua.aspchecker.model
     (keyword "invariant")
     (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.advisedBy")
     (keyword "advisedBy")))
+
+
+(defn advicetype
+  [ad]
+  (cond
+    (.equals (.getName (.getKind ad)) "around")
+    (keyword "around")
+    (.equals (.getName (.getKind ad)) "before")
+    (keyword "before")
+    (.equals (.getName (.getKind ad)) "after")
+    (keyword "after")))
+
 
 
 ;Bcel annotations
@@ -111,32 +125,36 @@ and their value as stored value"
 
 
 (defn bceladvice|annotation
-  "Return normalized annotations of an advice"
+  "Returns normalized annotations of an advice"
   [el]
   ((comp annotationaj|annotation bceladvice|annotationaj) el))
 
 
 (defn bcelmethod|annotation
-  "Return normalized annotations of a method"
+  "Returns normalized annotations of a method"
   [el]
   ((comp annotationaj|annotation bcelmethod|annotationaj) el))
 
 
 (defn shadow|invocation-method|called
   "Returns the BcelMethod referenced within the provided shadow"
-  ([] (map (fn[x](vector x (shadow|invocation-method|called (first x)))) (shadow)))
-  ([shadow] (filter (fn [x] (.contains (.toString shadow) (.toString (first x)))) (method))))
+  ([] (map 
+        (fn[x](vector 
+                (first x) 
+                (shadow|invocation-method|called (first x)))) 
+        (shadow)))
+  ([shadow] (first(first(filter 
+                          (fn [x] (.contains (.toString shadow) (.toString (first x)))) 
+                          (method))))))
 
 
 (defn advice-method-annotation
-  "Return a vector with the structure: [[advice[annotations]][method[annotations]]]"
+  "Returns a vector of maps with the members: :adv :acon :mtd :mcon"
   []
   (map
     (fn [x](let [[a s] x]
-             (vector (vector a 
-                             (bceladvice|annotation a))
-                     (vector (shadow|invocation-method|called s)
-                             (bcelmethod|annotation
-                               (first(first(shadow|invocation-method|called s))))))))
+             {:adv a 
+              :acon (bceladvice|annotation a) 
+              :mtd s
+              :mcon (bcelmethod|annotation (shadow|invocation-method|called s))}))
     (advice-shadow)))
-
