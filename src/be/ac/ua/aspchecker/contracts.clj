@@ -6,6 +6,22 @@ be.ac.ua.aspchecker.contracts
   (:import [be.ac.ua.aspchecker.utils Z3]))
 
 
+(defn to-contract-pair
+  [{:keys [adv acon mtd mcon]}]
+  (case (advicetype adv)
+    :before (vector (vector (:ensures acon) (:requires mcon))) 
+    :after (vector (vector (:ensures mcon) (:requires acon)))
+    :around (vector (vector (:requires acon) (:requires mcon))
+                    (vector (:ensures mcon) (:ensures acon)))))
+
+
+(defn pair-contracts
+  []
+  (reduce conj [] (map 
+                    to-contract-pair 
+                    (advice-method-annotation))))
+
+
 ;TODO
 (defn to-predicates
   "Translate the expression into logic predicates."
