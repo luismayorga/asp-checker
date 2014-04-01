@@ -1,6 +1,7 @@
-(ns be.ac.ua.aspchecker.z3
-    ^{:doc "Predicate transformation and z3 interop."
+(ns 
+  ^{:doc "Predicate transformation and z3 interop."
     :author "Luis Mayorga"}
+be.ac.ua.aspchecker.z3
   (:import [be.ac.ua.aspchecker.utils Z3]))
 
 
@@ -31,4 +32,4 @@
 
 (defn sat-compare
   [source target]
-  ())
+  false)
