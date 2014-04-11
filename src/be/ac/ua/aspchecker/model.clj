@@ -155,6 +155,6 @@ and their value as stored value"
     (fn [x](let [[a s] x]
              {:adv a 
               :acon (bceladvice|annotation a) 
-              :mtd s
+              :mtd (shadow|invocation-method|called s)
               :mcon (bcelmethod|annotation (shadow|invocation-method|called s))}))
     (advice-shadow)))

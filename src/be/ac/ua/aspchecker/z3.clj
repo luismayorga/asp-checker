@@ -22,14 +22,15 @@ be.ac.ua.aspchecker.z3
   "Joins two formulas and add their metadata"
   [form1 form2]
   ([(str 
-      "(benchmark tst :formula (and not (" 
+      "(benchmark tst :formula (and (not (" 
       form1
-      ")("
+      "))("
       form2
-      ")")
+      ")))")
     (cons (sorts form1) (sorts form2))]))
 
 
 (defn sat-compare
+  "Checks whether the first formula is stronger than the second one."
   [source target]
   false)
