@@ -8,7 +8,8 @@ be.ac.ua.aspchecker.model
   (:require [damp.ekeko.jdt.convenience :as conv])
   (:require [damp.ekeko.jdt.astbindings :as astb])
   (:require [damp.ekeko.jdt.ast :as as])
-  (:require [damp.ekeko.aspectj.soot :as soot]))
+  (:require [damp.ekeko.aspectj.soot :as soot])
+  (:require [clojure.string]))
 
 
 ; Program elements queries
@@ -81,7 +82,9 @@ be.ac.ua.aspchecker.model
     (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.invariant")
     (keyword "invariant")
     (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.advisedBy")
-    (keyword "advisedBy")))
+    (keyword "advisedBy")
+    (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.name")
+    (keyword "name")))
 
 
 (defn advicetype
@@ -158,3 +161,11 @@ and their value as stored value"
               :mtd (shadow|invocation-method|called s)
               :mcon (bcelmethod|annotation (shadow|invocation-method|called s))}))
     (advice-shadow)))
+
+
+(defn mentioned-by-advisedby
+  "Tests wheter the method has an advisedBy annotation mentioning the advice."
+  [{:keys [adv acon mtd mcon] :as info}]
+    (some 
+      #{(:name acon)}
+      (clojure.string/split (:advisedBy mcon "") #"\s")))

@@ -27,9 +27,7 @@ be.ac.ua.aspchecker.contracts
     (map check-annotation (advice-method-annotation)))
   ([{:keys [adv acon mtd mcon] :as info}]
     (when 
-      ;If not correct print error
-      ;TODO catch when into advisedBy annotation 
-      ((comp not compare-strength) info)
+      (and ((comp not compare-strength) info) (mentioned-by-advisedby info))
       (println (get check-error (advicetype adv))))))
   
 
