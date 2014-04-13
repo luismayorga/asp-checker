@@ -72,7 +72,6 @@ be.ac.ua.aspchecker.model
 
 ;Type mapping
 (defn annotationtype
-  "Returns the annotation type in keyword form"
   [an]
   (cond
     (.equals (.getTypeName an) "be.ac.ua.aspchecker.annotations.requires")
@@ -102,13 +101,11 @@ be.ac.ua.aspchecker.model
 ;Bcel annotations
 
 (defn bceladvice|annotationaj
-  "Returns the annotations of an advice"
   [el]
   (into [] (.getAnnotations (.getSignature el))))
 
 
 (defn bcelmethod|annotationaj
-  "Returns the annotations of a method"
   [el]
   (into [] (.getAnnotations el)))
 
@@ -151,7 +148,7 @@ and their value as stored value"
                           (method))))))
 
 
-(defn advice-method-annotation
+(defn contracts
   "Returns a vector of maps with the members: :adv :acon :mtd :mcon"
   []
   (map
@@ -163,9 +160,9 @@ and their value as stored value"
     (advice-shadow)))
 
 
-(defn mentioned-by-advisedby
+(defn mentioned-in-advisedby?
   "Tests wheter the method has an advisedBy annotation mentioning the advice."
-  [{:keys [adv acon mtd mcon] :as info}]
+  [{:keys [adv acon mtd mcon]}]
     (some 
       #{(:name acon)}
       (clojure.string/split (:advisedBy mcon "") #"\s")))

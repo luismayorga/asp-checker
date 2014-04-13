@@ -1,6 +1,5 @@
 package be.ac.ua.aspchecker.init;
 
-import org.aspectj.asm.IProgramElement;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
