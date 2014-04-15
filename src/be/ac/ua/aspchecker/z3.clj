@@ -24,6 +24,6 @@ be.ac.ua.aspchecker.z3
 (defn more-restrictive?
   [source target]
   (do
-    (parse-condition source)
-    (parse-condition target)
+    (condition-parser source)
+    (condition-parser target)
     false))
