@@ -7,8 +7,7 @@ be.ac.ua.aspchecker.contracts
 
 
 
-(defn print-error-info
-  [msg {:keys [adv acon mtd mcon]}]
+(defn print-error-info [msg {:keys [adv _ mtd _]}]
   (do
     (println msg)
     (println (.toString mtd))
@@ -16,8 +15,7 @@ be.ac.ua.aspchecker.contracts
     (println "")))
 
 
-(defn throw-error
-  [msg {:keys [adv acon mtd mcon] :as rel}]
+(defn throw-error [msg rel]
   (when
     (comp not mentioned-in-advisedby? rel)
     (print-error-info msg rel)))
@@ -26,30 +24,30 @@ be.ac.ua.aspchecker.contracts
 (defn check-contracts
   ([] 
     (map check-contracts (contracts)))
-  ([{:keys [adv acon mtd mcon] :as rel}]
-  (case (advicetype adv)
-    :before (do
-              (when 
-                (more-restrictive? (:invariant mcon false) (:invariant acon true))
-                (throw-error "Before advice: the invariant cannot be weakened." rel))
-              (when
-                (more-restrictive? (:requires acon false) (:requires mcon true))
-                (throw-error "Before advice: the precondition cannot be strengthened." rel)))
-    :after (do
-             (when
-               (more-restrictive? (:invariant mcon false) (:invariant acon true))
-               (throw-error "After advice: the invariant cannot be weakened." rel))
-             (when
-               (more-restrictive? (:requires acon false) (:ensures mcon true))
-               (throw-error "After advice: the precondition cannot be stronger than the method's postcondition." rel)))
-    :around (do
-              (when
-                (more-restrictive? (:invariant mcon false) (:invariant acon true))
-                (throw-error "Around advice: the invariant cannot be weakened." rel))
-              (when
-                (more-restrictive? (:requires acon false) (:requires mcon true))
-                (throw-error "Around advice: the precondition cannot be strengthened." rel))
-              (when 
-                (more-restrictive? (:requires acon false) (:ensures mcon true))
-                (throw-error "Around advice: the precondition cannot be stronger than the method's postcondition." rel))))))
+  ([{:keys [adv acon _ mcon] :as rel}]
+    (case (advicetype adv)
+      :before (do
+                (when 
+                  (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                  (throw-error "Before advice: the invariant cannot be weakened." rel))
+                (when
+                  (more-restrictive? (:requires acon false) (:requires mcon true))
+                  (throw-error "Before advice: the precondition cannot be strengthened." rel)))
+      :after (do
+               (when
+                 (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                 (throw-error "After advice: the invariant cannot be weakened." rel))
+               (when
+                 (more-restrictive? (:requires acon false) (:ensures mcon true))
+                 (throw-error "After advice: the precondition cannot be stronger than the method's postcondition." rel)))
+      :around (do
+                (when
+                  (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                  (throw-error "Around advice: the invariant cannot be weakened." rel))
+                (when
+                  (more-restrictive? (:requires acon false) (:requires mcon true))
+                  (throw-error "Around advice: the precondition cannot be strengthened." rel))
+                (when 
+                  (more-restrictive? (:requires acon false) (:ensures mcon true))
+                  (throw-error "Around advice: the precondition cannot be stronger than the method's postcondition." rel))))))
 

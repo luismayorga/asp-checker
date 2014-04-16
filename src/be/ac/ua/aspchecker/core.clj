@@ -5,8 +5,7 @@ be.ac.ua.aspchecker.core
   (:use [be.ac.ua.aspchecker.contracts])
   (:require [damp.ekeko.workspace.workspace :as ws]))
 
-(defn run
-  []
+(defn run []
   (do 
     (ws/for-each-workspace-project 
       (fn[p]

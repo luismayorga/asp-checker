@@ -162,7 +162,7 @@ and their value as stored value"
 
 (defn mentioned-in-advisedby?
   "Tests wheter the method has an advisedBy annotation mentioning the advice."
-  [{:keys [adv acon mtd mcon]}]
+  [{:keys [_ acon _ mcon]}]
     (some 
       #{(:name acon)}
       (clojure.string/split (:advisedBy mcon "") #"\s")))
