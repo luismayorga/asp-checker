@@ -56,12 +56,6 @@ be.ac.ua.aspchecker.transformation
     (= op "!")))
 
 
-(defn parentheses-char? [op]
-  (or
-    (= op ")")
-    (= op "(")))
-
-
 (defn terminal? [exp]
   (= (.getChildCount exp) 0))
 
@@ -69,8 +63,8 @@ be.ac.ua.aspchecker.transformation
 (defn parentheses-expression? [exp]
   (and
     (= (.getChildCount exp) 3)
-    (parentheses-char? (.getText (.getChild exp 0)))
-    (parentheses-char? (.getText (.getChild exp 2)))))
+    (= "(" (.getText (.getChild exp 0)))
+    (= ")" (.getText (.getChild exp 2)))))
 
 
 (defn logical-expression? [exp]
@@ -101,10 +95,15 @@ be.ac.ua.aspchecker.transformation
 
 
 (defn method-call? [exp]
+  (or
   (and
     (= (.getChildCount exp) 3)
     (= "(" (.getText (.getChild exp 1)))
-    (= ")" (.getText (.getChild exp 2)))))
+    (= ")" (.getText (.getChild exp 2))))
+  (and
+    (= (.getChildCount exp) 4)
+    (= "(" (.getText (.getChild exp 1)))
+    (= ")" (.getText (.getChild exp 3))))))
 
 
 (defn member-access? [exp]
@@ -112,6 +111,13 @@ be.ac.ua.aspchecker.transformation
     (= (.getChildCount exp) 3)
     (not (number? (read-string (.getText (.getChild exp 0)))))
     (= "." (.getText (.getChild exp 1)))))
+
+
+(defn vector-access? [exp]
+  (and
+    (= (.getChildCount exp) 4)
+    (= "[" (.getText (.getChild exp 1)))
+    (= "]" (.getText (.getChild exp 3)))
 
 
 ;Contract parsing
@@ -185,16 +191,26 @@ be.ac.ua.aspchecker.transformation
 
 (defn visit-method-call [rule]
   (str
-    "method_call_"
-    (visit-rule (.getChild rule 0))))
+  "__method_call__"
+  (visit-rule (.getChild rule 0))
+  (when 
+    (= (.getChildCount rule) 4)
+    (hash (.getText (.getChild rule 2))))))
 
 
 (defn visit-member-access [rule]
   (str
     (visit-rule (.getChild rule 0))
-    "_messages_"
+    "__messages__"
     (visit-rule (.getChild rule 2))))
 
+
+(defn visit-vector-access [rule]
+  (str
+    "__vector_access__"
+    (visit-rule (.getChild rule 0))
+    (hash (.getText (.getChild rule 2)))))
+    
 
 (defn visit-children [rule]
   (loop [result "" i 0 max (.getChildCount rule)]
@@ -219,6 +235,7 @@ be.ac.ua.aspchecker.transformation
     (ternary? rule) (visit-ternary rule)
     (method-call? rule) (visit-method-call rule)
     (member-access? rule) (visit-member-access rule)
+    (vector-access? rule) (visit-vector-access rule)
     (terminal? rule) (.getText rule)
     ;Recursively visit children
     :else (visit-children rule)))
