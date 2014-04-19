@@ -30,12 +30,6 @@ be.ac.ua.aspchecker.transformation
 
 (defn logical-operator? [op]
   (or 
-    (= op "==") 
-    (= op "!=") 
-    (= op ">") 
-    (= op ">=") 
-    (= op "<") 
-    (= op "<=") 
     (= op "&&") 
     (= op "||")))
 
@@ -47,6 +41,14 @@ be.ac.ua.aspchecker.transformation
     (= op "*")
     (= op "/")
     (= op "%")))
+
+
+(defn comparison-operator? [op]
+  (or
+    (= op ">") 
+    (= op ">=") 
+    (= op "<") 
+    (= op "<="))) 
 
 
 (defn unary-operator? [op]
@@ -73,10 +75,24 @@ be.ac.ua.aspchecker.transformation
     (logical-operator? (.getText (.getChild exp 1)))))
 
 
+(defn comparison-expression? [exp]
+  (and 
+    (= (.getChildCount exp) 3) 
+    (comparison-operator? (.getText (.getChild exp 1)))))
+
+
 (defn arithmetic-expression? [exp]
   (and
     (= (.getChildCount exp) 3)
     (arithmetic-operator? (.getText (.getChild exp 1)))))
+
+
+(defn equality-expression? [exp]
+  (and 
+    (= (.getChildCount exp) 3) 
+    (or
+      (= "==" (.getText (.getChild exp 1)))
+      (= "!=" (.getText (.getChild exp 1))))))
 
 
 (defn unary? [exp]
@@ -233,6 +249,8 @@ be.ac.ua.aspchecker.transformation
     (parentheses-expression? rule) (dump-parentheses rule)
     (logical-expression? rule) (visit-infix-expression rule)
     (arithmetic-expression? rule) (visit-infix-expression rule)
+    (comparison-expression? rule) (visit-infix-expression rule)
+    (equality-expression? rule) (visit-infix-expression rule)
     (unary? rule) (visit-unary rule)
     (ternary? rule) (visit-ternary rule)
     (method-call? rule) (visit-method-call rule)
@@ -248,6 +266,8 @@ be.ac.ua.aspchecker.transformation
 
 
 ;Sort retrieval
+(declare descendent-infer-type)
+
 
 (defn creates-identifier? [rule]
   (or
@@ -259,15 +279,78 @@ be.ac.ua.aspchecker.transformation
     (vector-access? rule)))
 
 
-(defn infer-type [rule])
+(defn creates-logic-result? [rule]
+  (or
+    (logical-expression? rule)
+    (comparison-expression? rule)))
 
 
-;Get the type of the other element of the binary relationship
+(defn match-inferior-type [rule]
+  (cond 
+    (logical-expression? rule) :bool
+    (comparison-expression? rule) :real
+    (arithmetic-expression? rule) :real
+    :else nil))
+
+
+(defn match-literal-type [term]
+  (cond
+    (.contains (.toString (.getPayload term)) "<53>") :bool
+    (.contains (.toString (.getPayload term)) "<54>") :uninterpreted
+    (.contains (.toString (.getPayload term)) "<52>") :real
+    (.contains (.toString (.getPayload term)) "<51>") :real
+    (.contains (.toString (.getPayload term)) "<55>") :uninterpreted
+    (.contains (.toString (.getPayload term)) "<56>") :uninterpreted))
+
+
+;Get the type of the opposite element of the binary relationship
 (defn match-symmetric-type [rule]
   (if
     (= (.getChild (.getParent rule) 0) rule)
-    (infer-type (.getChild (.getParent rule) 2))
-    (infer-type (.getChild (.getParent rule) 0))))
+    (descendent-infer-type (.getChild (.getParent rule) 2))
+    (descendent-infer-type (.getChild (.getParent rule) 0))))
+
+
+(defn match-unary [rule]
+  (let [fst (.getChild rule 0)
+        sec (.getChild rule 1)
+        fsttext (.getText fst)]
+    (if
+      (unary-operator? fsttext)
+      (descendent-infer-type sec)
+      (descendent-infer-type fst))))
+
+
+(defn ascendent-infer-type [rule]
+  (loop [ru rule
+         vad (.getParent ru)]
+    (cond
+      ;Top-level boolean expression
+      (nil? vad) :bool
+      ;Return the reached type
+      (match-inferior-type vad) (match-inferior-type vad)
+      (and
+        (ternary? vad)
+        (= (.getChild vad 0) ru)) :bool
+      ;Go down on the symmetric type
+      (equality-expression? vad) (match-symmetric-type ru)
+      ;Keep ascending
+      :else (recur vad (.getParent vad)))))
+
+
+(defn descendent-infer-type [rule]
+  (loop [ru rule]
+    (cond
+      ;Last level expression
+      (terminal? ru) (match-literal-type ru)
+      ;Give boolean result
+      (creates-logic-result? ru) :bool
+      (arithmetic-expression? ru) :real
+      (creates-identifier? ru) :uninterpreted
+      ;Keep descending
+      (unary? ru) (match-unary ru)
+      (ternary? ru) (recur (.getChild ru 2))
+      :else (recur (.getChild ru 0)))))
 
 
 (defn retrieve-sorts [root]
@@ -280,8 +363,18 @@ be.ac.ua.aspchecker.transformation
       (let [cur (.getChild root i)]
         (cond
           ;adds the identifier and keep iterating children
-          (creates-identifier? cur) (recur (conj result (visit-rule cur)) (+ i 1) max)
+          (creates-identifier? cur) (recur 
+                                      (conj 
+                                        result 
+                                        (hash-map 
+                                          :identifier (visit-rule cur) 
+                                          :type (ascendent-infer-type cur))) 
+                                      (+ i 1) 
+                                      max)
           ;skips terminal
-          (terminal? cur) (recur result (+ i 1) max)
+          (terminal? cur) (recur 
+                            result 
+                            (+ i 1) 
+                            max)
           ;keeps going down on the tree
           :else (recur (into [] (concat result (retrieve-sorts cur))) (+ i 1) max))))))
