@@ -90,20 +90,20 @@ be.ac.ua.aspchecker.transformation
 (defn ternary? [exp]
   (and
     (= (.getChildCount exp) 5)
-    (= ":" (.getText (.getChild exp 1)))
-    (= "?" (.getText (.getChild exp 3)))))
+    (= "?" (.getText (.getChild exp 1)))
+    (= ":" (.getText (.getChild exp 3)))))
 
 
 (defn method-call? [exp]
   (or
-  (and
-    (= (.getChildCount exp) 3)
-    (= "(" (.getText (.getChild exp 1)))
-    (= ")" (.getText (.getChild exp 2))))
-  (and
-    (= (.getChildCount exp) 4)
-    (= "(" (.getText (.getChild exp 1)))
-    (= ")" (.getText (.getChild exp 3))))))
+    (and
+      (= (.getChildCount exp) 3)
+      (= "(" (.getText (.getChild exp 1)))
+      (= ")" (.getText (.getChild exp 2))))
+    (and
+      (= (.getChildCount exp) 4)
+      (= "(" (.getText (.getChild exp 1)))
+      (= ")" (.getText (.getChild exp 3))))))
 
 
 (defn member-access? [exp]
@@ -117,7 +117,7 @@ be.ac.ua.aspchecker.transformation
   (and
     (= (.getChildCount exp) 4)
     (= "[" (.getText (.getChild exp 1)))
-    (= "]" (.getText (.getChild exp 3)))
+    (= "]" (.getText (.getChild exp 3)))))
 
 
 ;Contract parsing
@@ -191,11 +191,11 @@ be.ac.ua.aspchecker.transformation
 
 (defn visit-method-call [rule]
   (str
-  "__method_call__"
-  (visit-rule (.getChild rule 0))
-  (when 
-    (= (.getChildCount rule) 4)
-    (hash (.getText (.getChild rule 2))))))
+    "__method_call__"
+    (visit-rule (.getChild rule 0))
+    (when 
+      (= (.getChildCount rule) 4)
+      (hash (.getText (.getChild rule 2))))))
 
 
 (defn visit-member-access [rule]
@@ -210,10 +210,12 @@ be.ac.ua.aspchecker.transformation
     "__vector_access__"
     (visit-rule (.getChild rule 0))
     (hash (.getText (.getChild rule 2)))))
-    
+
 
 (defn visit-children [rule]
-  (loop [result "" i 0 max (.getChildCount rule)]
+  (loop [result "" 
+         i 0
+         max (.getChildCount rule)]
     (if
       (= i max)
       result
@@ -243,3 +245,43 @@ be.ac.ua.aspchecker.transformation
 
 (defn transform [contract]
   (visit-rule (parse-contract contract)))
+
+
+;Sort retrieval
+
+(defn creates-identifier? [rule]
+  (or
+    (and
+      (terminal? rule)
+      (.contains (.toString (.getPayload rule)) "<100>"))
+    (method-call? rule)
+    (member-access? rule)
+    (vector-access? rule)))
+
+
+(defn infer-type [rule])
+
+
+;Get the type of the other element of the binary relationship
+(defn match-symmetric-type [rule]
+  (if
+    (= (.getChild (.getParent rule) 0) rule)
+    (infer-type (.getChild (.getParent rule) 2))
+    (infer-type (.getChild (.getParent rule) 0))))
+
+
+(defn retrieve-sorts [root]
+  (loop [result []
+         i 0 
+         max (.getChildCount root)]
+    (if
+      (= i max)
+      result
+      (let [cur (.getChild root i)]
+        (cond
+          ;adds the identifier and keep iterating children
+          (creates-identifier? cur) (recur (conj result (visit-rule cur)) (+ i 1) max)
+          ;skips terminal
+          (terminal? cur) (recur result (+ i 1) max)
+          ;keeps going down on the tree
+          :else (recur (into [] (concat result (retrieve-sorts cur))) (+ i 1) max))))))
