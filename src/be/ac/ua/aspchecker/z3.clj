@@ -13,7 +13,7 @@ be.ac.ua.aspchecker.z3
       (new Context cfg))))
 
 
-(defn eval [ctx]
+(defn eval-context [ctx]
   (let
     [exp (nth (.SMTLIBFormulas ctx) 0)
      solv (.MkSolver ctx)]

@@ -125,8 +125,8 @@ be.ac.ua.aspchecker.transformation
 (defn member-access? [exp]
   (and
     (= (.getChildCount exp) 3)
-    (not (number? (read-string (.getText (.getChild exp 0)))))
-    (= "." (.getText (.getChild exp 1)))))
+    (= "." (.getText (.getChild exp 1)))
+    (not (number? (read-string (.getText (.getChild exp 0)))))))
 
 
 (defn vector-access? [exp]
@@ -228,6 +228,14 @@ be.ac.ua.aspchecker.transformation
     (hash (.getText (.getChild rule 2)))))
 
 
+(defn visit-terminal [rule]
+  (cond
+    ;integer
+    (.contains (.toString (.getPayload rule)) "<51>") (str (.getText rule) ".0")
+    (.contains (.toString (.getPayload rule)) "<54>") (str "\"" (.getText rule) "\"")
+    :else (.getText rule)))
+
+
 (defn visit-children [rule]
   (loop [result "" 
          i 0
@@ -256,7 +264,7 @@ be.ac.ua.aspchecker.transformation
     (method-call? rule) (visit-method-call rule)
     (member-access? rule) (visit-member-access rule)
     (vector-access? rule) (visit-vector-access rule)
-    (terminal? rule) (.getText rule)
+    (terminal? rule) (visit-terminal rule)
     ;Recursively visit children
     :else (visit-children rule)))
 
