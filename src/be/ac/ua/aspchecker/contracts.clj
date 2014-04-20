@@ -28,26 +28,26 @@ be.ac.ua.aspchecker.contracts
     (case (advicetype adv)
       :before (do
                 (when 
-                  (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                  (more-restrictive? (:invariant mcon) (:invariant acon))
                   (throw-error "Before advice: the invariant cannot be weakened." rel))
                 (when
-                  (more-restrictive? (:requires acon false) (:requires mcon true))
+                  (more-restrictive? (:requires acon) (:requires mcon))
                   (throw-error "Before advice: the precondition cannot be strengthened." rel)))
       :after (do
                (when
-                 (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                 (more-restrictive? (:invariant mcon) (:invariant acon))
                  (throw-error "After advice: the invariant cannot be weakened." rel))
                (when
-                 (more-restrictive? (:requires acon false) (:ensures mcon true))
+                 (more-restrictive? (:requires acon) (:ensures mcon))
                  (throw-error "After advice: the precondition cannot be stronger than the method's postcondition." rel)))
       :around (do
                 (when
-                  (more-restrictive? (:invariant mcon false) (:invariant acon true))
+                  (more-restrictive? (:invariant mcon) (:invariant acon))
                   (throw-error "Around advice: the invariant cannot be weakened." rel))
                 (when
-                  (more-restrictive? (:requires acon false) (:requires mcon true))
+                  (more-restrictive? (:requires acon) (:requires mcon))
                   (throw-error "Around advice: the precondition cannot be strengthened." rel))
                 (when 
-                  (more-restrictive? (:requires acon false) (:ensures mcon true))
+                  (more-restrictive? (:requires acon) (:ensures mcon))
                   (throw-error "Around advice: the precondition cannot be stronger than the method's postcondition." rel))))))
 

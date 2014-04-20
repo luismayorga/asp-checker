@@ -27,7 +27,9 @@ be.ac.ua.aspchecker.z3
   (let [cfg (new java.util.HashMap)]
     (do
       (.put cfg "model" "true")
-      (new Context cfg))))
+      (try
+        (new Context cfg)
+        (catch Exception e (println "Initialization of Z3 failed. Check that it is installed in your system."))))))
 
 
 (defn z3-create-symbols [ctx symbols]
@@ -66,7 +68,9 @@ be.ac.ua.aspchecker.z3
         funarr (into-array funcs)]
     (doto
       ctx
-      (.ParseSMTLIBString form nil nil symarr funarr))))
+      (try
+	      (.ParseSMTLIBString form nil nil symarr funarr)
+	      (catch Exception e (println "Bad contract syntax. Check the contract and that the java functionality used within it is supported."))))))
 
 
 (defn z3-eval [ctx]
