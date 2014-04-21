@@ -176,3 +176,19 @@ and their value as stored value"
 
 (defn bceladvice|name [advice]
   (:name (bceladvice|annotation advice)))
+
+
+(defn bceladvice|aspect [advice]
+  (ek/ekeko [?aspect]
+            (wea/aspect-advice ?aspect advice)))
+
+
+(defn aspect|dominates-aspect-explicitly+ [dom sub]
+  (ek/ekeko 
+    (wea/aspect|dominates-aspect-explicitly+ dom sub)))
+
+
+(defn advisedBy|advices [aby]
+  (map 
+    #(advice-by-name %)
+    (clojure.string/split aby #"\s")))

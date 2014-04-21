@@ -66,3 +66,29 @@ be.ac.ua.aspchecker.contracts
                   (check-more-restrictive? (:requires acon) (:requires mcon) rel)
                   (print-error-info "Around advice: the precondition cannot be strengthened." rel))))))
 
+
+(defn check-advisedby-order
+  ([] 
+    (doseq [inf (contracts)]
+      (when
+      (not (check-advisedby-order (get-in inf [:mcon :advisedBy])))
+      (print-error-info "Advices in advisedBy clause are not necessarily executed in that order." inf))))
+  ([aby]
+    (loop [col (map
+                 #(bceladvice|aspect %)
+                 (advisedBy|advices aby))
+           fst (first col)
+           scn (first(rest col))]
+      (if 
+        (and 
+          (not(nil? fst)) 
+          (not(nil? scn)))
+        (if
+          (not (aspect|dominates-aspect-explicitly+ fst scn))
+          false
+          (recur 
+            (rest (col))
+            (first (rest col))
+            (first (rest (rest col)))))
+        true))))
+  
