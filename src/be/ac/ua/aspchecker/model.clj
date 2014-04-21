@@ -163,6 +163,16 @@ and their value as stored value"
 (defn mentioned-in-advisedby?
   "Tests wheter the method has an advisedBy annotation mentioning the advice."
   [{:keys [_ acon _ mcon]}]
-    (some 
-      #{(:name acon)}
-      (clojure.string/split (:advisedBy mcon "") #"\s")))
+  (some 
+    #{(:name acon)}
+    (clojure.string/split (:advisedBy mcon "") #"\s")))
+
+
+(defn advice-by-name [name]
+  (:adv (first(filter
+                #(= (get-in % [:acon :name]) name)
+                (contracts)))))
+
+
+(defn bceladvice|name [advice]
+  (:name (bceladvice|annotation advice)))

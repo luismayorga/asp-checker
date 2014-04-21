@@ -349,8 +349,6 @@ be.ac.ua.aspchecker.transformation
 (defn descendent-infer-type [rule]
   (loop [ru rule]
     (cond
-      ;Last level expression
-      (terminal? ru) (match-literal-type ru)
       ;Give boolean result
       (creates-logic-result? ru) :bool
       (arithmetic-expression? ru) :real
@@ -358,6 +356,8 @@ be.ac.ua.aspchecker.transformation
       ;Keep descending
       (unary? ru) (match-unary ru)
       (ternary? ru) (recur (.getChild ru 2))
+      ;Last level expression
+      (terminal? ru) (match-literal-type ru)
       :else (recur (.getChild ru 0)))))
 
 

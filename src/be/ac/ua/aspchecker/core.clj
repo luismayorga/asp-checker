@@ -12,5 +12,5 @@ be.ac.ua.aspchecker.core
         (when 
           (ws/workspace-project-ekeko-enabled? p)
           (ws/build-project p))))
-    (check-contracts)))
+    (check-contracts-restrictiveness)))
 
