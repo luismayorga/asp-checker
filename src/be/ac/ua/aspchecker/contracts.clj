@@ -15,7 +15,8 @@ be.ac.ua.aspchecker.contracts
       (not (nil? (:name acon)))
       (prn (:name acon)))
     (prn (.toString (.getSourceLocation adv)))
-    (prn "")))
+    (prn "")
+    (flush)))
 
 
 (defn contract-missing? [contract]

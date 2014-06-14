@@ -184,7 +184,7 @@ and their value as stored value"
 
 
 (defn aspect|dominates-aspect-explicitly+ [dom sub]
-  (ek/ekeko 
+  (ek/ekeko []
     (wea/aspect|dominates-aspect-explicitly+ dom sub)))
 
 

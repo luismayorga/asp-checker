@@ -15,3 +15,9 @@ be.ac.ua.aspchecker.core
     (check-contracts-restrictiveness)
     (check-advisedby-order)))
 
+(defn check-asp []
+  (check-contracts-restrictiveness))
+
+(defn check-advisedby []
+  (check-advisedby-order))
+
