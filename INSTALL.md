@@ -17,7 +17,7 @@ It can be done as follows:
     1. `cd z3`
     2. `git checkout z3-java`
 + Generate the Z3 make file:  
-        `python scripts/mk\_make.py --java`
+        `python scripts/mk_make.py --java`
 + Build Z3 and install.
     1. `cd build`
     2. `make`
@@ -25,8 +25,8 @@ It can be done as follows:
 
 + Copy the generated libraries to the Java native libraries folder in your system.
     - **OS X:** `libz3java.dylib` into /Library/Java/Extensions
-    - **Windows:** `libz3java.dll` into `\textless JAVA\_HOME\textgreater \textbackslash jre\textbackslash lib\textbackslash ext`  
-                                E.g. `"c:\textbackslash Program Files\textbackslash Java\textbackslash jdk1.7.0\_{xx}\textbackslash jre\textbackslash lib\textbackslash ext"
+    - **Windows:** `libz3java.dll` into `<JAVA\_HOME>\jre\lib\ext`  
+                                E.g. `"c:\Program Files\Java\jdk1.7.0\_{xx}\jre\lib\ext"
 `
 
 ## Ekeko
@@ -38,7 +38,7 @@ In order to install it, a plugin for working with Clojure within JDT, Counterclo
 + Install Counterclockwise from its Eclipse update site.  
    `http://updatesite.ccw-ide.org/stable/`
 + Install Ekeko from the update site:  
-`http://soft.vub.ac.be/\textasciitilde cderoove/eclipse/`
+`http://soft.vub.ac.be/~cderoove/eclipse/`
 
 ## ASP checker
 
