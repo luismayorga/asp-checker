@@ -32,7 +32,7 @@ void foo(String a){...}
 ```
 
 ```Java
-@ensures("a.isEmpty()")
+@ensures("str.isEmpty()")
 @name("bar")
 void before(String str): call( void *.foo (String)) && args(str) {...}
 ```
